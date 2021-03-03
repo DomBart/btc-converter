@@ -1,0 +1,46 @@
+.card__container {
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  height: 60%;
+  min-width: 400px;
+  background-color: #fff;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 15px 30px 10px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0px 15px 30px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 15px 30px 10px rgba(0, 0, 0, 0.1);
+
+  .card__title {
+    text-align: center;
+    margin: 30px 0;
+  }
+
+  .card__top {
+    text-align: center;
+    input {
+      margin-left: 10px;
+    }
+  }
+
+  .card__currencies {
+    margin-top: 50px;
+    text-align: center;
+    .card__select {
+      margin-left: 10px;
+    }
+    .card__results {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+      .card__calculated {
+        display: inline-block;
+        margin: 10px;
+        .currency__remove {
+          margin-left: 5px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
