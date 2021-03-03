@@ -87,7 +87,13 @@ const ConverterCard = () => {
             if(!amount.active) {
                 empty = false;
             }
-            placeholder.push({code: amount.code, sum: amount.sum, active: amount.active})
+            placeholder.push(
+                {
+                    code: amount.code,
+                    sum: amount.sum,
+                    active: amount.active
+                }
+            )
         })
         setActiveEmpty(false);
         setDropDown(false);
@@ -106,17 +112,24 @@ const ConverterCard = () => {
             if(amount.active) {
                 empty = false;
             }
-            placeholder.push({code: amount.code, sum: amount.sum, active: amount.active})
+            placeholder.push(
+                {
+                    code: amount.code,
+                    sum: amount.sum,
+                    active: amount.active
+                }
+            )
         })
         setInactiveEmpty(false);
         setActiveEmpty(empty);
         setAmounts(placeholder);
     }
 
+    // Check input max length, set placeholder and state data
     const handleInput = (e:React.ChangeEvent<HTMLInputElement>) => {
         if(e.target.value.length === 0){
             e.target.value = '0';
-        } else if(e.target.value.charAt(0) === '0'){
+        } else if((e.target.value.length > 1 && e.target.value.charAt(0) === '0') || e.target.value.charAt(0) === '-'){
             e.target.value = e.target.value.slice(1);
         }
         if (e.target.value.length > e.target.maxLength) {
@@ -158,7 +171,13 @@ const ConverterCard = () => {
                             {
                                 amounts?.map((amount,i) => (
                                     (!amount.active) && (
-                                        <span key={i} className="select__item" onClick={() => setActive(amount.code)}>{amount.code}</span>
+                                        <span 
+                                            key={i}
+                                            className="select__item"
+                                            onClick={() => setActive(amount.code)}
+                                        >
+                                            {amount.code}
+                                        </span>
                                     )
                             ))}
                             </div>
