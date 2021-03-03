@@ -200,7 +200,7 @@ const ConverterCard = () => {
                                             className="currency__remove"
                                             onClick={() => setInactive(amount.code)}
                                             >
-                                            <IconContext.Provider value={{ className: 'remove_icon' }}>
+                                            <IconContext.Provider value={{ className: 'remove__icon' }}>
                                                 <RiCloseFill />
                                             </IconContext.Provider>
                                             </span>

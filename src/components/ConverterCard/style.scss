@@ -202,13 +202,13 @@ $border-color: #cccccc;
           position: absolute;
           right: 12px;
 
-          .remove_icon {
+          .remove__icon {
             color: $text-light;
             font-size: 1.2rem;
             margin-bottom: -3px;
             transition: all 0.2s ease-in-out;
           }
-          .remove_icon:hover {
+          .remove__icon:hover {
             color: orangered;
           }
         }
