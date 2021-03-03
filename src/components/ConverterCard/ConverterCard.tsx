@@ -23,6 +23,7 @@ const ConverterCard = () => {
     }
 
     const [bitcoinAmount, setBitcoinAmount] = useState(0);
+
     const [bitcoinData, setBitcoinData] = useState<bitcoinObject>()
     const [amounts, setAmounts] = useState<Array<amountObject>>();
 
@@ -30,6 +31,7 @@ const ConverterCard = () => {
     const [activeEmpty, setActiveEmpty] = useState(true);
 
     useEffect(() => {
+        //Fetch BTC exchange data from coindesk API
         const fetchData = async () => {
             try{
             const request = await axios.get('https://api.coindesk.com/v1/bpi/currentprice.json');
@@ -39,8 +41,9 @@ const ConverterCard = () => {
                 console.log(error);
             }
         }
-        
         fetchData();
+
+        //Fetch data every minute
         const interval = setInterval(() => {
             fetchData();
         }, 60000 );
@@ -49,6 +52,7 @@ const ConverterCard = () => {
     }, [])
 
     useEffect(() => {
+        //Calculate exchange amounts if input or BTC data changes
         const calculateRates = () => {
             if(bitcoinData){
                 let array: Array<amountObject> = [];
@@ -67,6 +71,7 @@ const ConverterCard = () => {
         calculateRates();
     }, [bitcoinAmount, bitcoinData])
 
+    //Set active currency fields
     const setActive = (id:string) => {
         let placeholder: Array<amountObject> = [];
         let empty = true;
@@ -84,6 +89,7 @@ const ConverterCard = () => {
         setAmounts(placeholder);
     }
 
+    //Deactivate currency fields
     const setInactive = (id:string) => {
         let placeholder: Array<amountObject> = [];
         let empty = true;
@@ -101,12 +107,24 @@ const ConverterCard = () => {
         setAmounts(placeholder);
     }
 
+    const handleInput = (e:React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value.length > e.target.maxLength) {
+            e.target.value = e.target.value.slice(0, e.target.maxLength)
+        }
+        setBitcoinAmount(+e.target.value);
+    }
+
     return (
         <div className="card__container">
             <h1 className="card__title">Bitcoin keitykla</h1>
             <div className="card__top">
-                <label >BTC
-                <input defaultValue={0} onChange={event => setBitcoinAmount(+event.target.value)} type="number" />
+                <label >{decode('&#8383;')}
+                <input 
+                    defaultValue={0}
+                    maxLength={12}
+                    onChange={e => handleInput(e)}
+                    type="number" 
+                />
                 </label>
             </div>
             <div className="card__currencies">
