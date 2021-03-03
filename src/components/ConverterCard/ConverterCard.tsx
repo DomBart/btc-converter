@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {decode} from 'html-entities';
+import { IconContext } from "react-icons";
+import { BsChevronDown } from 'react-icons/bs';
+import { RiCloseFill } from 'react-icons/ri';
 import './style.scss';
 
 const ConverterCard = () => {
@@ -18,7 +20,6 @@ const ConverterCard = () => {
     interface amountObject {
         code: string;
         sum: string;
-        symbol: string;
         active: boolean;
     }
 
@@ -29,6 +30,10 @@ const ConverterCard = () => {
 
     const [inactiveEmpty, setInactiveEmpty] = useState(false);
     const [activeEmpty, setActiveEmpty] = useState(true);
+
+    const [dropDown, setDropDown] = useState(false);
+
+    const [focus, setFocus] = useState(false);
 
     useEffect(() => {
         //Fetch BTC exchange data from coindesk API
@@ -58,12 +63,12 @@ const ConverterCard = () => {
                 let array: Array<amountObject> = [];
                 Object.keys(bitcoinData).forEach((key,i) => {
                     let bitNum = +(bitcoinData[key].rate.replace(',',''));
-                    let bitStr =  new Intl.NumberFormat().format(bitcoinAmount*bitNum);
+                    let bitStr =  new Intl.NumberFormat('us-US', { style: 'currency', currency: bitcoinData[key].code }).format(bitcoinAmount*bitNum);
                     let state = false;
                     if(amounts){
                        state = amounts[i].active
                     }
-                    array.push({code: bitcoinData[key].code, sum: bitStr, symbol: bitcoinData[key].symbol, active: state});
+                    array.push({code: bitcoinData[key].code, sum: bitStr, active: state});
                   });
                   setAmounts(array);
             }
@@ -82,9 +87,10 @@ const ConverterCard = () => {
             if(!amount.active) {
                 empty = false;
             }
-            placeholder.push({code: amount.code, sum: amount.sum, symbol: amount.symbol, active: amount.active})
+            placeholder.push({code: amount.code, sum: amount.sum, active: amount.active})
         })
         setActiveEmpty(false);
+        setDropDown(false);
         setInactiveEmpty(empty);
         setAmounts(placeholder);
     }
@@ -100,7 +106,7 @@ const ConverterCard = () => {
             if(amount.active) {
                 empty = false;
             }
-            placeholder.push({code: amount.code, sum: amount.sum, symbol: amount.symbol, active: amount.active})
+            placeholder.push({code: amount.code, sum: amount.sum, active: amount.active})
         })
         setInactiveEmpty(false);
         setActiveEmpty(empty);
@@ -108,6 +114,11 @@ const ConverterCard = () => {
     }
 
     const handleInput = (e:React.ChangeEvent<HTMLInputElement>) => {
+        if(e.target.value.length === 0){
+            e.target.value = '0';
+        } else if(e.target.value.charAt(0) === '0'){
+            e.target.value = e.target.value.slice(1);
+        }
         if (e.target.value.length > e.target.maxLength) {
             e.target.value = e.target.value.slice(0, e.target.maxLength)
         }
@@ -118,49 +129,64 @@ const ConverterCard = () => {
         <div className="card__container">
             <h1 className="card__title">Bitcoin keitykla</h1>
             <div className="card__top">
-                <label >{decode('&#8383;')}
-                <input 
+                <span className={`card__btc__symbol ${focus ? "green" : ""} unselectable`}>
+                    &#8383;
+                </span>
+                <input
                     defaultValue={0}
                     maxLength={12}
                     onChange={e => handleInput(e)}
+                    onFocus={() => setFocus(true)}
+                    onBlur={() => setFocus(false)}
                     type="number" 
                 />
-                </label>
             </div>
             <div className="card__currencies">
                 {
                     inactiveEmpty ? (
-                        <p>All currencies selected</p>
+                        <h3>Pasirinktos visos valiutos</h3>
                     ) : (
-                        <select defaultValue="default" onChange={(e) => setActive(e.target.value)} className="card__select">
-                        <option value="default" hidden>Add currency</option>
-                        {
-                        amounts?.map((amount,i) => (
-                            (!amount.active) && (
-                                <option key={i} value={amount.code} >{amount.code}</option>
-                            )
-                        ))}
-                        </select> 
+                        <div className="select__wrap">
+                            <div className="select__box" onClick={() => setDropDown(prevState => !prevState)}>
+                                <h1 className="unselectable">Pridėti valiutą</h1>
+                                <IconContext.Provider value={{ className: `select__caret ${dropDown ? "active" : ""} unselectable` }}>
+                                    <BsChevronDown />
+                                </IconContext.Provider>
+                            </div>
+                            { dropDown && (
+                            <div className="select__input__wrap">
+                            {
+                                amounts?.map((amount,i) => (
+                                    (!amount.active) && (
+                                        <span key={i} className="select__item" onClick={() => setActive(amount.code)}>{amount.code}</span>
+                                    )
+                            ))}
+                            </div>
+                            )}
+                        </div>
                     )
                 }
                 <div className="card__results">
                 {
                     activeEmpty ? (
-                        <p>Select a currency</p>
+                        <p>Pasirinkite valiutą</p>
                     ) : (
                         <>
                             {amounts?.map((amount,i) => (
                                 (amount.active) && (
-                                    <label key={i} >{decode(amount.symbol)}
+                                    <div className="currency__wrap" key={i} >
                                         <div className="card__calculated">
                                             <span>{amount.sum}</span>
                                             <span
                                             className="currency__remove"
                                             onClick={() => setInactive(amount.code)}
-                                            >X
+                                            >
+                                            <IconContext.Provider value={{ className: 'remove_icon' }}>
+                                                <RiCloseFill />
+                                            </IconContext.Provider>
                                             </span>
                                         </div>
-                                    </label>
+                                    </div>
                                 ))
                             )}
                         </>
