@@ -63,7 +63,11 @@ const ConverterCard = () => {
                 let array: Array<amountObject> = [];
                 Object.keys(bitcoinData).forEach((key,i) => {
                     let bitNum = +(bitcoinData[key].rate.replace(',',''));
-                    let bitStr =  new Intl.NumberFormat('us-US', { style: 'currency', currency: bitcoinData[key].code }).format(bitcoinAmount*bitNum);
+                    let bitStr =  new Intl.NumberFormat('us-US',
+                                            { style: 'currency',
+                                              currency: bitcoinData[key].code,
+                                              currencyDisplay: 'narrowSymbol'
+                                            }).format(bitcoinAmount*bitNum);
                     let state = false;
                     if(amounts){
                        state = amounts[i].active
