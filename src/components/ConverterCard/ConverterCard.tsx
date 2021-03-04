@@ -129,7 +129,9 @@ const ConverterCard = () => {
     const handleInput = (e:React.ChangeEvent<HTMLInputElement>) => {
         if(e.target.value.length === 0){
             e.target.value = '0';
-        } else if((e.target.value.length > 1 && e.target.value.charAt(0) === '0') || e.target.value.charAt(0) === '-'){
+        } else if(
+            (e.target.value.length > 1 && e.target.value.charAt(0) === '0' && e.target.value.charAt(1) !== '.')
+             || e.target.value.charAt(0) === '-'){
             e.target.value = e.target.value.slice(1);
         }
         if (e.target.value.length > e.target.maxLength) {
